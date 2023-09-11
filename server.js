@@ -6,10 +6,24 @@ var http = require('http'),
 var listingData, server;
 
 var requestHandler = function(request, response) {
+ // var parsedUrl = url.parse(request.url);
+  if(request.url === '/listings' && request.method === 'GET'){
+    response.writeHead(200, {"Content-Type": "application/json"});
+    response.write(listingData);
+    response.end();
+  }
+
+  else{
+    response.writeHead(404, {"Content-Type": "text/html"});
+    response.write('404 not found');
+    response.end();
+  }
+
+
   /*Investigate the request object. 
     You will need to use several of its properties: url and method
   */
-  //console.log(request);
+ 
 
   /*
     Your request handler should send listingData in the JSON format as a response if a GET request 
@@ -50,11 +64,15 @@ fs.readFile('listings.json', 'utf8', function(err, data) {
   
 
    //Save the data in the listingData variable already defined
-  
+  if (err) throw err;
+  listingData = data;
 
   //Creates the server
-  
+  server = http.createServer(requestHandler);
   //Start the server
+  server.listen(port, function(){
+    console.log('Server listening on: http://127.0.0.1:' + port)
+  });
 
 
 });
